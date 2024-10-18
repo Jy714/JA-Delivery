@@ -40,16 +40,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee login(EmployeeLoginDTO employeeLoginDTO) {
         String username = employeeLoginDTO.getUsername();
         String password = employeeLoginDTO.getPassword();
-
         //1、根据用户名查询数据库中的数据
         Employee employee = employeeMapper.getByUsername(username);
-
         //2、处理各种异常情况（用户名不存在、密码不对、账号被锁定）
         if (employee == null) {
             //账号不存在
             throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
-
         //密码比对
         // 对前端传过来的明文密码进行加密处理
         password = DigestUtils.md5DigestAsHex(password.getBytes());
@@ -57,12 +54,10 @@ public class EmployeeServiceImpl implements EmployeeService {
             //密码错误
             throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
         }
-
         if (employee.getStatus() == StatusConstant.DISABLE) {
             //账号被锁定
             throw new AccountLockedException(MessageConstant.ACCOUNT_LOCKED);
         }
-
         //3、返回实体对象
         return employee;
     }
@@ -74,21 +69,16 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void save(EmployeeDTO employeeDTO) {
         Employee employee = new Employee();
-
         //对象属性拷贝
         BeanUtils.copyProperties(employeeDTO,employee);
-
         //设置账号的状态
         employee.setStatus(StatusConstant.ENABLE);
-
         employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
-
         //补全剩余的东西
-        employee.setCreateUser(BaseContext.getCurrentId()); //从 BaseContext里的ThreadLocal 拿当前用户id
-        employee.setUpdateUser(BaseContext.getCurrentId());
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
-
+//        employee.setCreateUser(BaseContext.getCurrentId()); //从 BaseContext里的ThreadLocal 拿当前用户id
+//        employee.setUpdateUser(BaseContext.getCurrentId());
+//        employee.setCreateTime(LocalDateTime.now());
+//        employee.setUpdateTime(LocalDateTime.now());
         employeeMapper.insert(employee);
     }
 
@@ -100,17 +90,14 @@ public class EmployeeServiceImpl implements EmployeeService {
     public PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
         // 用插件实现分页查询
         PageHelper.startPage(employeePageQueryDTO.getPage(),employeePageQueryDTO.getPageSize());
-
         Page<Employee> page = (Page)employeeMapper.pageQuery(employeePageQueryDTO);
-
         long total = page.getTotal();
         List<Employee> records = page.getResult();
-
         return new PageResult(total,records);
     }
 
     /**
-     * 更新员工数据
+     * 启用禁用员工账号
      * @param status
      * @param id
      */
@@ -131,13 +118,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void updateEmployee(EmployeeDTO employeeDTO) {
         Employee employee = new Employee();
         BeanUtils.copyProperties(employeeDTO,employee);
-        employee.setUpdateUser(BaseContext.getCurrentId());
-        employee.setUpdateTime(LocalDateTime.now());
+//        employee.setUpdateUser(BaseContext.getCurrentId());
+//        employee.setUpdateTime(LocalDateTime.now());
         employeeMapper.updateEmployee(employee);
     }
 
     /**
-     * 更新员工账号
+     * 根据id查找员工
      * @param id
      * @return
      */
