@@ -1,6 +1,5 @@
 package com.sky.controller.admin;
 
-import com.github.pagehelper.Page;
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.result.PageResult;
@@ -9,10 +8,11 @@ import com.sky.service.DishService;
 import com.sky.vo.DishVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 菜品管理
@@ -50,5 +50,18 @@ public class DishController {
         log.info("菜品查询分页: {}", dishPageQueryDTO);
         PageResult result = dishService.pageQuery(dishPageQueryDTO);
     return Result.success(result);
+    }
+
+    /**
+     * 批量删除菜品
+     * @param ids
+     * @return
+     */
+    @ApiOperation("批量删除菜品")
+    @DeleteMapping
+    public Result deleteBatch(@RequestParam List<Long> ids){
+        log.info("批量删除菜品: {}",ids);
+        dishService.deleteBatch(ids);
+        return Result.success();
     }
 }
