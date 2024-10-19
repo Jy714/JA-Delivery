@@ -11,6 +11,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import java.util.Map;
+
 @Mapper
 public interface SetmealMapper {
 
@@ -41,4 +43,6 @@ public interface SetmealMapper {
 
     @Delete("delete from setmeal where id = #{setmealId}")
     void deleteById(Long setmealId);
+
+    Integer countByMap(Map map);
 }
